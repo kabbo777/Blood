@@ -34,8 +34,8 @@ class LeaderboardModel {
             } else {
                 try {
                     $this->db = new PDO("mysql:host=localhost;dbname=smart_blood_db;charset=utf8mb4", "root", "", [
-                        PDO::ATTR_ERRMODE => PDO_ERRMODE_EXCEPTION,
-                        PDO::ATTR_DEFAULT_FETCH_MODE => PDO_FETCH_ASSOC
+                        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
                     ]);
                 } catch (PDOException $e) {
                     die("Database connection failed: " . $e->getMessage());
