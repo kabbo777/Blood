@@ -5,10 +5,42 @@ class LeaderboardModel {
     public function __construct($db = null) {
         if ($db !== null) {
             $this->db = $db;
-        } elseif (isset($GLOBALS['db'])) {
+        } elseif (isset($GLOBALS['db']) && $GLOBALS['db'] instanceof PDO) {
             $this->db = $GLOBALS['db'];
-        } elseif (isset($GLOBALS['pdo'])) {
+        } elseif (isset($GLOBALS['pdo']) && $GLOBALS['pdo'] instanceof PDO) {
             $this->db = $GLOBALS['pdo'];
+        } elseif (isset($GLOBALS['conn']) && $GLOBALS['conn'] instanceof PDO) {
+            $this->db = $GLOBALS['conn'];
+        } else {
+            $config_files = [
+                __DIR__ . '/../config/database.php',
+                __DIR__ . '/../config/db.php',
+                __DIR__ . '/../config.php',
+                __DIR__ . '/../db.php'
+            ];
+            foreach ($config_files as $file) {
+                if (file_exists($file)) {
+                    require_once $file;
+                    break;
+                }
+            }
+
+            if (isset($pdo) && $pdo instanceof PDO) {
+                $this->db = $pdo;
+            } elseif (isset($db) && $db instanceof PDO) {
+                $this->db = $db;
+            } elseif (isset($conn) && $conn instanceof PDO) {
+                $this->db = $conn;
+            } else {
+                try {
+                    $this->db = new PDO("mysql:host=localhost;dbname=smart_blood_db;charset=utf8mb4", "root", "", [
+                        PDO::ATTR_ERRMODE => PDO_ERRMODE_EXCEPTION,
+                        PDO::ATTR_DEFAULT_FETCH_MODE => PDO_FETCH_ASSOC
+                    ]);
+                } catch (PDOException $e) {
+                    die("Database connection failed: " . $e->getMessage());
+                }
+            }
         }
     }
 
