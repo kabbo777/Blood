@@ -1,9 +1,14 @@
 <?php
-define('BASE_URL', '/smart_blood_network/views');
-define('SITE_NAME', 'Smart Blood Network');
-if (!defined('GEMINI_API_KEY')) {
-    define('GEMINI_API_KEY', $_ENV['GEMINI_API_KEY'] ?? 'AQ.Ab8RN6KSavrQfq3ejFyMeSuvXhAs1gSf2Ftm8EhiwfIlrd_CMw');
-}
-if (!defined('GOOGLE_MAPS_API_KEY')) {
-    define('GOOGLE_MAPS_API_KEY', $_ENV['GOOGLE_MAPS_API_KEY'] ?? 'AIzaSyAPrT7Xra9IdrxJKqyoOJ5IcNm0urEOE28');
+class Config {
+    public static function get($key, $default = null) {
+        $config = [
+            'db_host' => getenv('DB_HOST') ?: '127.0.0.1',
+            'db_name' => getenv('DB_NAME') ?: 'blood_network',
+            'db_user' => getenv('DB_USER') ?: 'root',
+            'db_pass' => getenv('DB_PASS') ?: '',
+            'gemini_api_key' => getenv('GEMINI_API_KEY') ?: ''
+        ];
+
+        return $config[$key] ?? $default;
+    }
 }
