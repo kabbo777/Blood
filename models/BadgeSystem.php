@@ -2,35 +2,23 @@
 require_once __DIR__ . '/../config/Database.php';
 
 class BadgeSystem {
-    private $conn;
+    private $db;
 
     public function __construct() {
-        $db = new Database();
-        $this->conn = $db->connect();
+        $this->db = Database::getInstance()->getConnection();
     }
 
-    public function getDonorBadges($donorId) {
-        $query = "SELECT COUNT(*) as total FROM donations WHERE donor_id = :donor_id";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':donor_id', $donorId);
-        $stmt->execute();
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        $count = $row['total'] ?? 0;
+    public function getUserBadges($userId) {
+        $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM donations WHERE donor_id = :user_id");
+        $stmt->execute(['user_id' => $userId]);
+        $count = $stmt->fetch()['total'] ?? 0;
 
         $badges = [];
-        if ($count >= 1) {
-            $badges[] = ['title' => 'First Blood', 'level' => 'Bronze', 'desc' => 'Completed 1st successful donation'];
-        }
-        if ($count >= 3) {
-            $badges[] = ['title' => 'Life Saver', 'level' => 'Silver', 'desc' => 'Completed 3+ donations'];
-        }
-        if ($count >= 5) {
-            $badges[] = ['title' => 'Community Hero', 'level' => 'Gold', 'desc' => 'Completed 5+ donations'];
-        }
-        if ($count >= 10) {
-            $badges[] = ['title' => 'Legendary Guardian', 'level' => 'Platinum', 'desc' => 'Completed 10+ donations'];
-        }
+        if ($count >= 1)  $badges[] = ['tier' => 'Bronze', 'description' => 'First Donation Completed'];
+        if ($count >= 5)  $badges[] = ['tier' => 'Silver', 'description' => '5 Donations Completed'];
+        if ($count >= 10) $badges[] = ['tier' => 'Gold', 'description' => '10 Donations Completed'];
+        if ($count >= 25) $badges[] = ['tier' => 'Platinum', 'description' => 'Lifesaver Legend'];
 
-        return ['count' => $count, 'badges' => $badges];
+        return ['total_donations' => $count, 'badges' => $badges];
     }
 }
