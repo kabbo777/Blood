@@ -1,27 +1,48 @@
 <?php
-require_once __DIR__ . '/../config/Database.php';
-
 class LeaderboardModel {
-    private $conn;
+    private $db;
 
-    public function __construct() {
-        $db = new Database();
-        $this->conn = $db->connect();
+    public function __construct($db = null) {
+        if ($db !== null) {
+            $this->db = $db;
+        } elseif (isset($GLOBALS['db'])) {
+            $this->db = $GLOBALS['db'];
+        } elseif (isset($GLOBALS['pdo'])) {
+            $this->db = $GLOBALS['pdo'];
+        }
     }
 
-    public function getDistrictLeaderboard($district = '') {
-        $query = "SELECT u.name, d.district, d.blood_group, COUNT(d.id) as donation_count 
-                  FROM donations d 
-                  JOIN users u ON d.donor_id = u.id ";
-        if (!empty($district)) {
-            $query .= " WHERE d.district = :district ";
-        }
-        $query .= " GROUP BY d.donor_id, d.district ORDER BY donation_count DESC LIMIT 20";
+    public function getDistrictLeaderboard($district = "") {
+        $sql = "SELECT u.id, u.full_name AS name, u.blood_group, u.location, u.reliability_score, COUNT(d.id) AS total_donations 
+                FROM users u 
+                LEFT JOIN donations d ON u.id = d.donor_id 
+                WHERE u.role = 'donor'";
         
-        $stmt = $this->conn->prepare($query);
+        $params = [];
         if (!empty($district)) {
-            $stmt->bindParam(':district', $district);
+            $sql .= " AND (u.location = :district OR d.district = :district)";
+            $params[':district'] = $district;
         }
+
+        $sql .= " GROUP BY u.id 
+                 ORDER BY total_donations DESC, u.reliability_score DESC";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getTopDonors($limit = 10) {
+        $sql = "SELECT u.id, u.full_name AS name, u.blood_group, u.location, u.reliability_score, COUNT(d.id) AS total_donations 
+                FROM users u 
+                LEFT JOIN donations d ON u.id = d.donor_id 
+                WHERE u.role = 'donor' 
+                GROUP BY u.id 
+                ORDER BY total_donations DESC, u.reliability_score DESC 
+                LIMIT :limit";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
