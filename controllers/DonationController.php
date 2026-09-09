@@ -1,11 +1,4 @@
 <?php
-// controllers/DonationController.php
-// NEW FILE — handles donor accepting a blood request and recording the donation.
-//
-// Flow:
-//   GET  /donations/accept?request_id=X  →  accept()   show confirmation form
-//   POST /donations/save                 →  save()     write to DB, set Resting
-//   GET  /donations/history              →  history()  donor's full history + badge
 
 require_once __DIR__ . '/../models/BloodRequestModel.php';
 require_once __DIR__ . '/../models/DonationModel.php';
