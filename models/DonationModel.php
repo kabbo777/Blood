@@ -9,10 +9,7 @@ class DonationModel {
         $this->db = Database::getInstance()->getConnection();
     }
 
-    /**
-     * Record a completed donation.
-     * Returns the new donation ID.
-     */
+    
     public function create(array $data): int {
         $stmt = $this->db->prepare(
             "INSERT INTO `donations`
@@ -33,9 +30,7 @@ class DonationModel {
         return (int) $this->db->lastInsertId();
     }
 
-    /**
-     * Total completed donations for a donor (used for badge calculation).
-     */
+
     public function countByDonor(int $donorId): int {
         $stmt = $this->db->prepare(
             "SELECT COUNT(*) FROM `donations` WHERE `donor_id` = ? AND `status` = 'Completed'"
@@ -44,9 +39,7 @@ class DonationModel {
         return (int) $stmt->fetchColumn();
     }
 
-    /**
-     * Most recent donation date — used to calculate cooldown remaining.
-     */
+
     public function getLastDonationDate(int $donorId): ?string {
         $stmt = $this->db->prepare(
             "SELECT `donation_date` FROM `donations`
@@ -57,9 +50,7 @@ class DonationModel {
         return $stmt->fetchColumn() ?: null;
     }
 
-    /**
-     * Full donation history for a donor, joined with the original request for context.
-     */
+  
     public function getByDonor(int $donorId): array {
         $stmt = $this->db->prepare(
             "SELECT d.*,
