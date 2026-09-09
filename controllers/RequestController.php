@@ -1,16 +1,4 @@
 <?php
-// controllers/RequestController.php
-//
-// ISSUE #1 FIX (who can request blood):
-//   Only RECIPIENTS and HOSPITAL ADMINS may post a blood request.
-//   Donors donate blood (they accept requests via DonationController) - they
-//   must NOT be able to create requests. This is the hard, server-side
-//   enforcement: even if a donor crafts the URL directly, create()/save()
-//   will reject them with a 403. The "Request Blood" links are also hidden
-//   from donors and guests in the navbar / home / requests list views.
-//
-// (Existing bug fixes kept: POST field names now match the view + model +
-//  DB schema -> units_required, location, contact_number, requirement_type.)
 
 require_once __DIR__ . '/../models/BloodRequestModel.php';
 
