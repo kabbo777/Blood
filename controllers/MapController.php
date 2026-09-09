@@ -1,22 +1,24 @@
 <?php
-require_once __DIR__ . '/../config/Database.php';
-require_once __DIR__ . '/../models/MapLocation.php';
 
-class MapController {
-    private $db;
-    private $mapModel;
+require_once __DIR__ . '/../models/UserModel.php';
+require_once __DIR__ . '/../models/BloodRequestModel.php';
+require_once __DIR__ . '/../config/Config.php';
 
-    public function __construct() {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        $database = new Database();
-        $this->db = $database->connect();
-        $this->mapModel = new MapLocation($this->db);
-    }
+class MapController extends Controller {
 
-    public function getMapDataJson() {
-        $markers = $this->mapModel->getAllMapMarkers();
-        return json_encode($markers, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
+    public function index(): void {
+        $userModel = new UserModel();
+
+        // All donors with GPS — includes status (Available/Resting/Unavailable)
+        $donors = $userModel->getMapLocations();
+
+        $requestModel = new BloodRequestModel();
+        $requests     = $requestModel->getAllRequests();
+
+        $this->render('map/index', [
+            'donors'      => $donors,
+            'requests'    => $requests,
+            'gmapsApiKey' => Config::get('google_maps_api_key'),
+        ]);
     }
 }
