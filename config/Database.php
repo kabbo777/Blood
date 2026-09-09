@@ -1,34 +1,39 @@
 <?php
-require_once __DIR__ . '/Config.php';
+// config/Database.php
+// BUG FIXED: Was a procedural script returning $pdo. All models call
+// Database::getInstance()->getConnection(), so this must be a singleton class.
 
 class Database {
-    private static $instance = null;
-    private $conn;
+    private static ?Database $instance = null;
+    private PDO $connection;
 
     private function __construct() {
-        $host = Config::get('db_host');
-        $db   = Config::get('db_name');
-        $user = Config::get('db_user');
-        $pass = Config::get('db_pass');
+        $host   = '127.0.0.1';
+        $dbname = 'smart_blood_db';
+        $user   = 'root';
+        $pass   = '';
 
         try {
-            $this->conn = new PDO("mysql:host={$host};dbname={$db};charset=utf8mb4", $user, $pass, [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            ]);
+            $this->connection = new PDO(
+                "mysql:host={$host};dbname={$dbname};charset=utf8mb4",
+                $user,
+                $pass
+            );
+            $this->connection->setAttribute(PDO::ATTR_ERRMODE,        PDO::ERRMODE_EXCEPTION);
+            $this->connection->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            die("Database connection error: " . $e->getMessage());
+            die("Database Connection Failed: " . $e->getMessage());
         }
     }
 
-    public static function getInstance() {
+    public static function getInstance(): Database {
         if (self::$instance === null) {
             self::$instance = new Database();
         }
         return self::$instance;
     }
 
-    public function getConnection() {
-        return $this->conn;
+    public function getConnection(): PDO {
+        return $this->connection;
     }
 }
