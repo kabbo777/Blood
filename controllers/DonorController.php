@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../models/BadgeSystem.php';
 require_once __DIR__ . '/../models/DonationHistory.php';
 require_once __DIR__ . '/../models/CooldownTracker.php';
+require_once __DIR__ . '/../models/UserModel.php';
 
 class DonorController extends Controller {
     public function badges() {
@@ -28,6 +29,20 @@ class DonorController extends Controller {
         ]);
     }
 
+    public function toggleStatus() {
+        $this->requireRole(['donor']);
+        $status = filter_input(INPUT_POST, 'status', FILTER_SANITIZE_SPECIAL_CHARS);
+        
+        if (in_array($status, ['Available', 'Resting', 'Unavailable'])) {
+            $userModel = new UserModel();
+            $userModel->updateStatus($_SESSION['user_id'], $status);
+            $_SESSION['user_status'] = $status;
+        }
+        
+        header("Location: /smart_blood_network/home");
+        exit();
+    }
+
     public function followup() {
         $this->requireRole(['donor']);
         $this->render('donor/followup');
@@ -45,7 +60,7 @@ class DonorController extends Controller {
             $historyModel->recordFollowup($_SESSION['user_id'], $donationId, $sideEffects, $wellbeingScore);
         }
 
-        header("Location: /donor/history");
+        header("Location: /smart_blood_network/donor/history");
         exit();
     }
 }
