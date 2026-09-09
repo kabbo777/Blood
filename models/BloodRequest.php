@@ -9,9 +9,7 @@ class BloodRequestModel {
         $this->db = Database::getInstance()->getConnection();
     }
 
-    /**
-     * Create a new blood request and trigger SOS broadcast if urgent.
-     */
+    
     public function createRequest(
         int    $userId,
         string $patientName,
@@ -51,7 +49,7 @@ class BloodRequestModel {
 
         $requestId = (int) $this->db->lastInsertId();
 
-        // BUG FIX: was checking 'Critical_SOS' — DB enum value is 'Emergency_SOS'
+       
         if (in_array($urgency, ['Emergency_SOS', 'High'])) {
             $this->broadcastSOS($requestId, $bloodGroup, $location, $hospitalName);
         }
@@ -59,9 +57,7 @@ class BloodRequestModel {
         return $requestId;
     }
 
-    /**
-     * Notify all available donors of the matching blood group in the same area.
-     */
+    
     private function broadcastSOS(int $requestId, string $bloodGroup, string $location, string $hospitalName): void {
         $stmt = $this->db->prepare(
             "SELECT `id` FROM `users`
@@ -84,9 +80,7 @@ class BloodRequestModel {
         }
     }
 
-    /**
-     * Return all blood requests, newest first.
-     */
+    
     public function getAllRequests(): array {
         $stmt = $this->db->prepare(
             "SELECT * FROM `blood_requests` ORDER BY `created_at` DESC"
@@ -95,9 +89,7 @@ class BloodRequestModel {
         return $stmt->fetchAll();
     }
 
-    /**
-     * Return a single blood request by ID.
-     */
+    
     public function getById(int $id): array|false {
         $stmt = $this->db->prepare("SELECT * FROM `blood_requests` WHERE `id` = ?");
         $stmt->execute([$id]);
