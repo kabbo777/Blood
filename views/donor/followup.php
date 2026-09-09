@@ -1,28 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Post-Donation Follow-up</title>
-</head>
-<body>
-    <h2>Post-Donation Health Check-in</h2>
-    <form action="/donor/followup/save" method="POST">
-        <label for="donation_id">Donation Record ID:</label><br>
-        <input type="number" id="donation_id" name="donation_id" required><br><br>
-
-        <label for="wellbeing_score">How do you feel? (1 = Poor, 5 = Excellent):</label><br>
-        <select id="wellbeing_score" name="wellbeing_score" required>
-            <option value="5">5 - Excellent</option>
-            <option value="4">4 - Good</option>
-            <option value="3">3 - Fair</option>
-            <option value="2">2 - Weak</option>
-            <option value="1">1 - Unwell</option>
-        </select><br><br>
-
-        <label for="side_effects">Any symptoms or side effects (dizziness, bruising):</label><br>
-        <textarea id="side_effects" name="side_effects" rows="4" cols="50"></textarea><br><br>
-
-        <button type="submit">Submit Health Status</button>
-    </form>
+<?php require_once __DIR__ . '/../navbar.php'; ?>
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm border-0 p-4">
+            <h3 class="text-danger fw-bold mb-3 text-center">Post-Donation Health Check-in</h3>
+            <form action="/smart_blood_network/donor/followup/save" method="POST">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Donation Record ID</label>
+                    <input type="number" name="donation_id" class="form-control" required placeholder="e.g. 101">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">How do you feel? (1 = Poor, 5 = Excellent)</label>
+                    <select name="wellbeing_score" class="form-select" required>
+                        <option value="5">5 - Excellent (Feeling Great)</option>
+                        <option value="4">4 - Good (Normal)</option>
+                        <option value="3">3 - Fair (Slight Fatigue)</option>
+                        <option value="2">2 - Weak (Dizzy/Tired)</option>
+                        <option value="1">1 - Unwell (Need Medical Attention)</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">Any side effects or notes?</label>
+                    <textarea name="side_effects" class="form-control" rows="4" placeholder="Describe any bruising, dizziness, or symptoms..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-danger w-100 fw-bold">Submit Health Status</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
