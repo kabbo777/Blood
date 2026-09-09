@@ -1,62 +1,41 @@
 <?php
-require_once __DIR__ . '/../config/Database.php';
-require_once __DIR__ . '/../models/HealthScreener.php';
-require_once __DIR__ . '/../models/User.php';
 
-class ScreenerController {
-    private $db;
-    private $screenerModel;
-    private $userModel;
+require_once __DIR__ . '/../models/ScreenerModel.php';
+require_once __DIR__ . '/../models/UserModel.php';
 
-    public function __construct() {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        if (!isset($_SESSION['user_id'])) {
-            header('Location: http://localhost/smart_blood_network/views/auth/login.php?msg=login_required');
+class ScreenerController extends Controller {
+
+    public function index(): void {
+        $this->render('screener/index');
+    }
+
+    public function check(): void {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header("Location: /smart_blood_network/screener");
             exit();
         }
 
-        $database = new Database();
-        $this->db = $database->connect();
-        $this->screenerModel = new HealthScreener($this->db);
-        $this->userModel = new User($this->db);
-    }
+        $age        = (int)   ($_POST['age']        ?? 0);
+        $weight     = (float) ($_POST['weight']     ?? 0);
+        $hemoglobin = (float) ($_POST['hemoglobin'] ?? 0);
+        $infection  = isset($_POST['infection']);
+        $tattoo     = isset($_POST['tattoo']);
+        $medication = isset($_POST['medication']);
 
-    public function submitScreener() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $userId = $_SESSION['user_id'];
-            $bloodGroup = $_POST['blood_group'] ?? null;
-            $age = (int)($_POST['age'] ?? 0);
-            $weight = (float)($_POST['weight_kg'] ?? 0);
-            $hasChronic = isset($_POST['has_chronic_illness']) ? 1 : 0;
-            $recentTattoo = isset($_POST['recent_tattoo_surgery']) ? 1 : 0;
-            $feelingHealthy = isset($_POST['feeling_healthy']) ? 1 : 0;
+        // Delegate eligibility logic to the Model
+        $screenerModel = new ScreenerModel();
+        $result        = $screenerModel->evaluateEligibility(
+            $age, $weight, $hemoglobin, $infection, $tattoo, $medication
+        );
 
-            // Update blood group in user profile if submitted
-            if ($bloodGroup) {
-                $this->userModel->updateBloodGroup($userId, $bloodGroup);
-            }
-
-            $evalResult = $this->screenerModel->evaluateAndSave(
-                $userId, $age, $weight, $hasChronic, $recentTattoo, $feelingHealthy
-            );
-
-            return [
-                'processed' => true,
-                'is_eligible' => $evalResult['eligible'],
-                'reasons' => $evalResult['reasons'],
-                'blood_group_updated' => true
-            ];
+        // If eligible and user is logged in, update their health status
+        if ($result['eligible'] && isset($_SESSION['user_id'])) {
+            $userModel = new UserModel();
+            $userModel->updateHealthStatus($_SESSION['user_id'], 1);
+            $_SESSION['health_check_passed'] = 1;
         }
-    }
 
-    public function getLastStatus() {
-        return $this->screenerModel->getLatestScreening($_SESSION['user_id']);
-    }
-
-    public function getCurrentUserBloodGroup() {
-        $user = $this->userModel->getById($_SESSION['user_id']);
-        return $user['blood_group'] ?? 'O+';
+        // Re-render the same screener page with the result
+        $this->render('screener/index', ['result' => $result]);
     }
 }
