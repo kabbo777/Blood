@@ -1,44 +1,22 @@
-<?php
-if (session_status() === PHP_SESSION_NONE) { session_start(); }
-require_once __DIR__ . '/../../controllers/CertificateController.php';
-
-$code = $_GET['code'] ?? '';
-$certCtrl = new CertificateController();
-$cert = $certCtrl->getCertificateData($code);
-
-if (!$cert) {
-    die("Invalid or expired certificate code.");
-}
-?>
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Official Donation Certificate - Smart Blood Network</title>
-    <style>
-        .cert-card { width: 750px; margin: 40px auto; padding: 40px; border: 10px solid #c0392b; background: #fff; font-family: 'Georgia', serif; text-align: center; box-shadow: 0 0 15px rgba(0,0,0,0.2); }
-        .cert-header { font-size: 28px; color: #c0392b; font-weight: bold; text-transform: uppercase; }
-        .cert-body { margin-top: 30px; font-size: 18px; line-height: 1.6; color: #2c3e50; }
-        .donor-name { font-size: 26px; font-weight: bold; text-decoration: underline; color: #2c3e50; margin: 15px 0; }
-        .cert-footer { margin-top: 40px; border-top: 2px solid #ccc; padding-top: 20px; font-size: 14px; color: #7f8c8d; }
-    </style>
-</head>
-<body>
-    <div class="cert-card">
-        <div class="cert-header">Certificate of Appreciation</div>
-        <p>This certificate is proudly presented to</p>
-        <div class="donor-name"><?= htmlspecialchars($cert['donor_name']) ?></div>
-        <div class="cert-body">
-            For outstanding voluntary contribution by donating blood group <strong><?= htmlspecialchars($cert['blood_group']) ?></strong><br>
-            at <strong><?= htmlspecialchars($cert['hospital_name']) ?></strong> (<?= htmlspecialchars($cert['district']) ?> District)<br>
-            on <strong><?= htmlspecialchars($cert['donation_date']) ?></strong>.
-        </div>
-        <div class="cert-footer">
-            Certificate ID: <strong><?= htmlspecialchars($cert['certificate_code']) ?></strong><br>
-            Issued by Smart Blood Network System
+<?php require_once __DIR__ . '/../navbar.php'; ?>
+<div class="d-flex justify-content-center">
+    <div class="card shadow-lg border-danger border-3 p-4 text-center" style="max-width: 650px; width: 100%;">
+        <div class="card-body">
+            <div class="text-danger fs-1 mb-2">🏅</div>
+            <h2 class="card-title text-danger fw-bold text-uppercase mb-1">Certificate of Appreciation</h2>
+            <p class="text-muted small mb-4">SMART BLOOD NETWORK OFFICIAL RECOGNITION</p>
+            <p class="fs-5 mb-1">This digital certificate is proudly presented to</p>
+            <h3 class="fw-bold text-dark my-3 border-bottom pb-2 border-danger d-inline-block px-4"><?= htmlspecialchars($cert['donor_name'] ?? 'Valued Donor') ?></h3>
+            <p class="card-text text-muted mt-2">
+                For generously donating blood (Group: <strong class="text-danger"><?= htmlspecialchars($cert['blood_group'] ?? 'N/A') ?></strong>) on 
+                <strong><?= htmlspecialchars($cert['donation_date'] ?? date('Y-m-d')) ?></strong>.
+            </p>
+            <p class="fst-italic text-danger fw-semibold my-4">"Your selflessness gives someone another chance at life."</p>
+            <button onclick="window.print()" class="btn btn-outline-danger mt-2">Print Certificate</button>
         </div>
     </div>
-    <div style="text-align:center;">
-        <button onclick="window.print()" style="padding:10px 20px;background:#2c3e50;color:white;border:none;cursor:pointer;">Print Certificate</button>
-    </div>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
