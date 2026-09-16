@@ -1,7 +1,5 @@
 <?php
-// core/Controller.php
-// BUG FIXED: requireRole() was checking $_SESSION['user_role'] but AuthController
-// sets $_SESSION['role'] on login — that mismatch blocked ALL protected routes.
+
 
 abstract class Controller {
     protected function render(string $view, array $data = []): void {
@@ -24,7 +22,6 @@ abstract class Controller {
             exit();
         }
 
-        // BUG FIX: was $_SESSION['user_role'] — correct key is $_SESSION['role']
         if (!empty($allowedRoles) && !in_array($_SESSION['role'] ?? '', $allowedRoles)) {
             http_response_code(403);
             die("Unauthorized access: insufficient privileges.");
