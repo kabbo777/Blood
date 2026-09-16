@@ -4,16 +4,12 @@ require_once __DIR__ . '/../models/BloodRequestModel.php';
 
 class RequestController extends Controller {
 
-    // GET /requests/create - show the "post a request" form.
     public function create(): void {
-        // Donors are intentionally excluded here.
         $this->requireRole(['recipient', 'hospital_admin']);
         $this->render('requests/create');
     }
 
-    // POST /requests/save - store the submitted request.
     public function save(): void {
-        // Same role guard as create() so the rule cannot be bypassed.
         $this->requireRole(['recipient', 'hospital_admin']);
 
         $patientName      = filter_input(INPUT_POST, 'patient_name',      FILTER_SANITIZE_SPECIAL_CHARS);
@@ -46,7 +42,6 @@ class RequestController extends Controller {
         exit();
     }
 
-    // GET /requests/list - anyone (including guests) may browse all requests.
     public function list(): void {
         $requestModel = new BloodRequestModel();
         $requests     = $requestModel->getAllRequests();
@@ -54,7 +49,6 @@ class RequestController extends Controller {
         $this->render('requests/list', ['requests' => $requests]);
     }
 
-    // GET /requests/show - view a single request (public).
     public function show(): void {
         $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 
