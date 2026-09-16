@@ -1,6 +1,5 @@
 <?php
-// views/donations/accept.php
-// NEW FILE — Donation acceptance form shown to a donor whose blood group matches a request.
+
 require_once __DIR__ . '/../navbar.php';
 ?>
 
