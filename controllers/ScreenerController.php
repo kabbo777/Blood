@@ -22,20 +22,17 @@ class ScreenerController extends Controller {
         $tattoo     = isset($_POST['tattoo']);
         $medication = isset($_POST['medication']);
 
-        // Delegate eligibility logic to the Model
         $screenerModel = new ScreenerModel();
         $result        = $screenerModel->evaluateEligibility(
             $age, $weight, $hemoglobin, $infection, $tattoo, $medication
         );
 
-        // If eligible and user is logged in, update their health status
         if ($result['eligible'] && isset($_SESSION['user_id'])) {
             $userModel = new UserModel();
             $userModel->updateHealthStatus($_SESSION['user_id'], 1);
             $_SESSION['health_check_passed'] = 1;
         }
 
-        // Re-render the same screener page with the result
         $this->render('screener/index', ['result' => $result]);
     }
 }
