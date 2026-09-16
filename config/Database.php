@@ -1,8 +1,4 @@
 <?php
-// config/Database.php
-// BUG FIXED: Was a procedural script returning $pdo. All models call
-// Database::getInstance()->getConnection(), so this must be a singleton class.
-
 class Database {
     private static ?Database $instance = null;
     private PDO $connection;
