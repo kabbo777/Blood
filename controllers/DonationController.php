@@ -27,7 +27,6 @@ class DonationController extends Controller {
             exit;
         }
 
-        // Blood group guard — belt-and-suspenders (button is hidden in list view too)
         if (($_SESSION['blood_group'] ?? '') !== $request['blood_group']) {
             header('Location: /smart_blood_network/requests/list');
             exit;
@@ -53,13 +52,11 @@ class DonationController extends Controller {
         $reqModel = new BloodRequestModel();
         $request  = $reqModel->getById((int)$requestId);
 
-        // Re-validate blood group server-side
         if (!$request || ($_SESSION['blood_group'] ?? '') !== $request['blood_group']) {
             header('Location: /smart_blood_network/requests/list');
             exit;
         }
 
-        // Prevent double-donation during cooldown
         if (($_SESSION['user_status'] ?? '') === 'Resting') {
             header('Location: /smart_blood_network/donations/history');
             exit;
@@ -77,7 +74,6 @@ class DonationController extends Controller {
             'hospital_name' => $request['hospital_name'],
         ]);
 
-        // 90-day cooldown: set DB status + session
         (new UserModel())->updateStatus($donorId, 'Resting');
         $_SESSION['user_status'] = 'Resting';
 
@@ -99,7 +95,6 @@ class DonationController extends Controller {
         $count     = $donationModel->countByDonor($donorId);
         $lastDate  = $donationModel->getLastDonationDate($donorId);
 
-        // Badge level based on total completed donations
         $badge = match(true) {
             $count >= 10 => ['name' => 'Platinum', 'color' => 'info',    'icon' => '💎'],
             $count >= 6  => ['name' => 'Gold',     'color' => 'warning', 'icon' => '🥇'],
@@ -108,7 +103,6 @@ class DonationController extends Controller {
             default      => ['name' => 'None',     'color' => 'light',   'icon' => '—'],
         };
 
-        // Days remaining in 90-day cooldown
         $cooldownDaysLeft = null;
         if ($lastDate && ($_SESSION['user_status'] ?? '') === 'Resting') {
             $cooldownEnd = (new DateTime($lastDate))->modify('+90 days');
@@ -116,7 +110,6 @@ class DonationController extends Controller {
             if ($cooldownEnd > $today) {
                 $cooldownDaysLeft = (int)$today->diff($cooldownEnd)->days;
             } else {
-                // Cooldown expired — auto-restore to Available
                 (new UserModel())->updateStatus($donorId, 'Available');
                 $_SESSION['user_status'] = 'Available';
             }
