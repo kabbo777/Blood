@@ -84,10 +84,10 @@ class AuthController extends Controller {
         $user      = $userModel->login($email, $password);
 
         if ($user) {
-            // BUG FIX: session already started in index.php — no session_start() here
+            
             $_SESSION['user_id']            = $user['id'];
             $_SESSION['name']               = $user['name'];
-            $_SESSION['role']               = $user['role'];   // key is 'role'
+            $_SESSION['role']               = $user['role'];  
             $_SESSION['blood_group']        = $user['blood_group']        ?? null;
             $_SESSION['health_check_passed']= $user['health_check_passed'] ?? 0;
             $_SESSION['user_status']        = $user['status']             ?? 'Available';
