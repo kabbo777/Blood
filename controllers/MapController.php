@@ -9,7 +9,6 @@ class MapController extends Controller {
     public function index(): void {
         $userModel = new UserModel();
 
-        // All donors with GPS — includes status (Available/Resting/Unavailable)
         $donors = $userModel->getMapLocations();
 
         $requestModel = new BloodRequestModel();
