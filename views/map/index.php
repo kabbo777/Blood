@@ -1,11 +1,5 @@
 <?php
-// views/map/index.php
-// UPDATED: Replaced Leaflet with Google Maps JavaScript API.
-// Marker colours by donor status:
-//   🔴 red    → Available
-//   🟠 orange → Resting (90-day cooldown)
-//   ⚫ grey   → Unavailable
-//   🟡 yellow → Active blood request
+
 require_once __DIR__ . '/../navbar.php';
 ?>
 
@@ -25,7 +19,6 @@ require_once __DIR__ . '/../navbar.php';
 </div>
 
 <script>
-    // Data injected from MapController (MVC-correct — no DB in views)
     const DONORS   = <?= json_encode($donors   ?? []) ?>;
     const REQUESTS = <?= json_encode($requests ?? []) ?>;
 
@@ -37,7 +30,6 @@ require_once __DIR__ . '/../navbar.php';
             streetViewControl: false,
         });
 
-        // ── Circle-icon factory (no external image CDN needed) ────────────────
         function circleIcon(fillColor) {
             return {
                 path: google.maps.SymbolPath.CIRCLE,
@@ -59,7 +51,6 @@ require_once __DIR__ . '/../navbar.php';
         // One shared InfoWindow — reused for every marker
         const infoWindow = new google.maps.InfoWindow();
 
-        // ── Donor markers ─────────────────────────────────────────────────────
         DONORS.forEach(function(donor) {
             const lat = parseFloat(donor.latitude);
             const lng = parseFloat(donor.longitude);
@@ -95,7 +86,6 @@ require_once __DIR__ . '/../navbar.php';
             });
         });
 
-        // ── Active blood request markers ──────────────────────────────────────
         REQUESTS.forEach(function(req) {
             const lat = parseFloat(req.latitude);
             const lng = parseFloat(req.longitude);
