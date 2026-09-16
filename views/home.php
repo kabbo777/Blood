@@ -1,17 +1,10 @@
 <?php
-// views/home.php
-//
-// ISSUE #1 FIX: the "Post Requirement" card is only shown to recipients &
-//               hospital admins (donors cannot post requests).
-// ISSUE #2 FIX: the "Hospital Inventory" card is shown to every logged-in
-//               user, but the wording/button switches between "Manage Stock"
-//               (admins) and "View Inventory" (everyone else).
-// Earlier fix kept: use $_SESSION['role'] (not the never-set 'user_role').
+
 require_once __DIR__ . '/navbar.php';
 
 $role          = $_SESSION['role'] ?? '';
-$canRequest    = in_array($role, ['recipient', 'hospital_admin'], true);   // Issue #1
-$isInvManager  = in_array($role, ['hospital_admin', 'admin'], true);       // Issue #2
+$canRequest    = in_array($role, ['recipient', 'hospital_admin'], true);  
+$isInvManager  = in_array($role, ['hospital_admin', 'admin'], true);       
 ?>
 
 <div class="p-4 mb-4 bg-white rounded-3 shadow-sm border">
