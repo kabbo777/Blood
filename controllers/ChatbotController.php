@@ -8,7 +8,6 @@ class ChatbotController extends Controller {
         $this->render('chatbot/index');
     }
 
-    // POST /chatbot/chat
     public function chat(): void {
         error_reporting(0);
         header('Content-Type: application/json');
