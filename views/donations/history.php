@@ -1,6 +1,5 @@
 <?php
-// views/donations/history.php
-// NEW FILE — Donor's personal donation history, badge level, and cooldown status.
+
 require_once __DIR__ . '/../navbar.php';
 
 $badgeColors = [
