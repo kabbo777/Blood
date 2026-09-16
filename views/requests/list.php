@@ -1,10 +1,5 @@
 <?php
-// views/requests/list.php
-// UPDATED: Added "Accept & Donate" button for matching donors.
-//   - Only visible to logged-in donors
-//   - Only shown when donor's blood group matches the request
-//   - Hidden if donor is in Resting (cooldown) status
-//   - Hidden if request is not Active
+
 require_once __DIR__ . '/../navbar.php';
 
 $isDonor        = (($_SESSION['role'] ?? '') === 'donor');
@@ -73,11 +68,7 @@ $donorAvailable = (($_SESSION['user_status'] ?? 'Available') === 'Available');
                         </div>
 
                         <?php
-                        // "Accept & Donate" button:
-                        // - User must be a donor
-                        // - Blood group must match
-                        // - Donor must not be in cooldown
-                        // - Request must be Active
+                        
                         $canAccept = $isDonor
                                   && $donorBg === $req['blood_group']
                                   && $req['status'] === 'Active';
