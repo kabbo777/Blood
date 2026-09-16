@@ -1,6 +1,5 @@
 <?php
-// views/requests/show.php
-// BUG FIXED: was using $req['district'] but DB column is `location`.
+
 require_once __DIR__ . '/../navbar.php';
 ?>
 
@@ -23,7 +22,6 @@ require_once __DIR__ . '/../navbar.php';
                 </p>
                 <p class="mb-1"><strong>Hospital:</strong> <?= htmlspecialchars($req['hospital_name']) ?></p>
 
-                <!-- BUG FIX: was $req['district'] — correct key from DB is 'location' -->
                 <p class="text-muted"><strong>Location:</strong> <?= htmlspecialchars($req['location'] ?? '') ?></p>
 
                 <p class="mb-1">
