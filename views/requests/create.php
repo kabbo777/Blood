@@ -1,11 +1,5 @@
 <?php
-// views/requests/create.php
-// BUG FIXED:
-//  1. Form field `district` → `location` (matches DB column and RequestController).
-//  2. Field `units_needed` → `units_required` (matches DB column).
-//  3. Field `contact_phone` → `contact_number` (matches DB column).
-//  4. Urgency values were wrong: 'Normal/Urgent/Critical_SOS' → DB enum: Emergency_SOS/High/Medium/Low.
-//  5. Added requirement_type field (Blood / Platelets / Plasma) from DB schema.
+
 require_once __DIR__ . '/../navbar.php';
 ?>
 <div class="row justify-content-center">
@@ -51,12 +45,10 @@ require_once __DIR__ . '/../navbar.php';
 
                 <div class="row g-3 mb-3">
                     <div class="col-md-6">
-                        <!-- BUG FIX: field name was 'district' → 'location' to match DB column -->
                         <label class="form-label fw-semibold">Location / District</label>
                         <input type="text" name="location" class="form-control" required placeholder="e.g. Mirpur, Dhaka">
                     </div>
                     <div class="col-md-6">
-                        <!-- BUG FIX: urgency values now match DB enum (Emergency_SOS/High/Medium/Low) -->
                         <label class="form-label fw-semibold">Urgency Level</label>
                         <select name="urgency_level" class="form-select">
                             <option value="Emergency_SOS">🚨 Emergency SOS</option>
@@ -67,7 +59,6 @@ require_once __DIR__ . '/../navbar.php';
                     </div>
                 </div>
 
-                <!-- BUG FIX: field name was 'contact_phone' → 'contact_number' -->
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Contact Number</label>
                     <input type="text" name="contact_number" class="form-control" required placeholder="+88017...">
